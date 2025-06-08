@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitwise Matching Pattern</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .output {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bitwise Matching Pattern</h1>
+        <p>Enter an integer:</p>
+        <input type="number" id="numberInput" placeholder="Example: 6">
+        <button onclick="findNextLarger()">Find Next Larger</button>
+        <div id="output" class="output"></div>
+    </div>
+
+    <script>
+        function nextLargerWithSameBinaryOnes(n) {
+            let c = n, c0 = 0, c1 = 0;
+
+            // Count trailing zeros and ones
+            while (((c & 1) === 0) && (c !== 0)) {
+                c0++;
+                c >>= 1;
+            }
+            while ((c & 1) === 1) {
+                c1++;
+                c >>= 1;
+            }
+
+            // If there are no zeros to flip, there's no larger number
+            if (c0 + c1 === 31 || c0 + c1 === 0) return -1;
+
+            // Position of the rightmost non-trailing zero
+            const pos = c0 + c1;
+
+            // Flip the rightmost non-trailing zero
+            n |= (1 << pos);
+
+            // Clear all bits to the right of pos
+            n &= ~((1 << pos) - 1);
+
+            // Insert (c1-1) ones on the right
+            n |= (1 << (c1 - 1)) - 1;
+
+            return n;
+        }
+
+        function findNextLarger() {
+            const input = document.getElementById("numberInput").value;
+            const num = parseInt(input, 10);
+            const outputElement = document.getElementById("output");
+
+            if (isNaN(num) || num < 0) {
+                outputElement.innerHTML = `<span class="error">Please enter a valid non-negative integer.</span>`;
+                return;
+            }
+
+            const result = nextLargerWithSameBinaryOnes(num);
+
+            if (result === -1) {
+                outputElement.innerHTML = `<span class="error">No larger integer with the same number of binary 1s exists.</span>`;
+            } else {
+                outputElement.innerHTML = `Next larger integer with the same binary 1s: ${result}`;
+            }
+        }
+    </script>
+</body>
+</html>
